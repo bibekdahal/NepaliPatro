@@ -179,6 +179,8 @@ namespace NepaliPatro
 
         void FillCalendar()
         {
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            int ey, em, ed; ey = em = ed = 0;
             int col = nd.GetFirstDay(currentYear, currentMonth);
             int row = 0;
             for (int i = 0; i < col; i++)
@@ -210,6 +212,23 @@ namespace NepaliPatro
                     else tboxes[row, col].Foreground = grayBrush;
 
                     panels[row, col].Background = grayBrush4;
+                }
+
+                nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, j);
+                string key = new DateTime(ey, em, ed).Ticks.ToString();
+                if (localSettings.Values.ContainsKey(key))
+                {
+                    AppBarToggleButton icon = new AppBarToggleButton();
+                    icon.Icon = new SymbolIcon(Symbol.Flag);
+                    icon.IsChecked = true;
+                    icon.IsEnabled = false;
+                    icon.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Right;
+
+                    panels[row, col].Children.Add(icon);
+                   
+                    ToolTip toolTip = new ToolTip();
+                    toolTip.Content = localSettings.Values[key];
+                    ToolTipService.SetToolTip(panels[row, col], toolTip);
                 }
                 col++;
 
@@ -373,7 +392,6 @@ namespace NepaliPatro
             YearsList.SelectedIndex = currentYear - 2000;
         }
 
-
         Grid m_selection;
         private void DoTasks(IUICommand command)
         {
@@ -382,16 +400,17 @@ namespace NepaliPatro
             int i = tag / 7;
             int j = tag % 7;
 
+            int col = nd.GetFirstDay(currentYear, currentMonth);
+            if (i == 0 && j < col) return;
+
+            int day = tag - col + 1;
+            int ey = 0, em = 0, ed = 0;
+            nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, day);
             switch (currentId)
             {
                 case 1:
                     {                        
-                        int col = nd.GetFirstDay(currentYear, currentMonth);
-                        if (i == 0 && j < col) return;
-
-                        int day = tag - col + 1;
-                        int ey = 0, em = 0, ed = 0;
-                        nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, day);
+                        
 
                         if (new DateTime(ey, em, ed) < DateTime.Today) return;
 
@@ -401,13 +420,8 @@ namespace NepaliPatro
                     break;
                 case 2:
                     {
-                        AppBarToggleButton icon = new AppBarToggleButton();
-                        icon.Icon = new SymbolIcon(Symbol.Flag);
-                        icon.IsChecked = true;
-                        icon.IsEnabled = false;
-                        icon.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Right;
-                        
-                        m_selection.Children.Add(icon);
+                        int[] dts = new int[] { ey, em, ed, currentYear, currentMonth, day };
+                        this.Frame.Navigate(typeof(FlagPage), dts);
                     }
                     break;
             }
