@@ -57,7 +57,10 @@ namespace NepaliPatro
             tbDate.Text = MainPage.GetNepVal(dates[3]) + "/" + MainPage.GetNepVal(dates[4]) + "/" + MainPage.GetNepVal(dates[5]);
             m_ey = dates[0]; m_em = dates[1]; m_ed = dates[2];
 
-            timepicker1.Time = DateTime.Now.TimeOfDay.Add(new TimeSpan(0,1,0));
+            if (new DateTime(m_ey, m_em, m_ed) == DateTime.Today)
+                timepicker1.Time = DateTime.Now.TimeOfDay.Add(new TimeSpan(0, 1, 0));
+            else
+                timepicker1.Time = new TimeSpan(0);
         }
         private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
@@ -105,6 +108,8 @@ namespace NepaliPatro
 
                 ScheduledToastNotification scheduledToast = new ScheduledToastNotification(toastXml, time);
                 ToastNotificationManager.CreateToastNotifier().AddToSchedule(scheduledToast);
+
+                this.Frame.GoBack();
             }
             else
             {

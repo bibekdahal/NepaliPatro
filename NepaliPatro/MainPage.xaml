@@ -10,6 +10,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.TopAppBar>
+        <CommandBar>
+            <AppBarButton Label="सूचनाहरू" Icon="Bullets" Click="AppBarButton_Click"/>
+            <!--AppBarButton Label="Help" Icon="Help"/-->
+
+        </CommandBar>
+    </Page.TopAppBar>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Viewbox>
             <Grid>

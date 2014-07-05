@@ -176,23 +176,6 @@ namespace NepaliPatro
         #endregion
 
 
-        void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            int tag = (int)((Grid)sender).Tag;
-            int i = tag / 7;
-            int j = tag % 7;
-            int col = nd.GetFirstDay(currentYear, currentMonth);
-            if (i == 0 && j < col) return;
-
-            int day = tag - col + 1;
-            int ey = 0, em = 0, ed = 0;
-            nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, day);
-
-            if (new DateTime(ey, em, ed) < DateTime.Today) return;
-
-            int[] dts = new int[] { ey, em, ed, currentYear, currentMonth, day };
-            this.Frame.Navigate(typeof(NotificationsPage), dts);
-        }
 
         void FillCalendar()
         {
@@ -262,26 +245,27 @@ namespace NepaliPatro
             nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
 
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
-            //TileSquare150x150Block); for windows 8.1+
             tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
+            ((XmlElement)tileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
 
             XmlDocument tileXmlWide = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150BlockAndText01);
             tileXmlWide.GetElementsByTagName("text")[4].InnerText = GetNepVal(d);
-            tileXmlWide.GetElementsByTagName("text")[5].InnerText = weeks[(int)td.DayOfWeek];
+            tileXmlWide.GetElementsByTagName("text")[3].InnerText = weeks[(int)td.DayOfWeek];
             tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
-            tileXmlWide.GetElementsByTagName("text")[3].InnerText = td.ToString("d");
+            tileXmlWide.GetElementsByTagName("text")[0].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlWide.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
             IXmlNode node = tileXml.ImportNode(tileXmlWide.GetElementsByTagName("binding").Item(0), true);
             tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
-
 
             XmlDocument tileXmlLarge = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare310x310BlockAndText02);
             tileXmlLarge.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXmlLarge.GetElementsByTagName("text")[1].InnerText = weeks[(int)td.DayOfWeek];
             tileXmlLarge.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
             tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
 
             IXmlNode node2 = tileXml.ImportNode(tileXmlLarge.GetElementsByTagName("binding").Item(0), true);
             tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node2);
@@ -312,18 +296,30 @@ namespace NepaliPatro
             nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
 
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
-            //TileSquare150x150Block); for windows 8.1+
             tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
+            ((XmlElement)tileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
 
             XmlDocument tileXmlWide = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150BlockAndText01);
             tileXmlWide.GetElementsByTagName("text")[4].InnerText = GetNepVal(d);
             tileXmlWide.GetElementsByTagName("text")[3].InnerText = weeks[(int)td.DayOfWeek];
             tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
+            tileXmlWide.GetElementsByTagName("text")[0].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlWide.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
             IXmlNode node = tileXml.ImportNode(tileXmlWide.GetElementsByTagName("binding").Item(0), true);
             tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
+
+            XmlDocument tileXmlLarge = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare310x310BlockAndText02);
+            tileXmlLarge.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
+            tileXmlLarge.GetElementsByTagName("text")[1].InnerText = weeks[(int)td.DayOfWeek];
+            tileXmlLarge.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
+            tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
+
+            IXmlNode node2 = tileXml.ImportNode(tileXmlLarge.GetElementsByTagName("binding").Item(0), true);
+            tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node2);
 
             ScheduledTileNotification scheduledTile = new ScheduledTileNotification(tileXml, td);
             scheduledTile.ExpirationTime = td.AddDays(1);
@@ -419,6 +415,28 @@ namespace NepaliPatro
 
             MessageDialog msg = new MessageDialog(str);
             await msg.ShowAsync();
+        }
+
+        void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            int tag = (int)((Grid)sender).Tag;
+            int i = tag / 7;
+            int j = tag % 7;
+            int col = nd.GetFirstDay(currentYear, currentMonth);
+            if (i == 0 && j < col) return;
+
+            int day = tag - col + 1;
+            int ey = 0, em = 0, ed = 0;
+            nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, day);
+
+            if (new DateTime(ey, em, ed) < DateTime.Today) return;
+
+            int[] dts = new int[] { ey, em, ed, currentYear, currentMonth, day };
+            this.Frame.Navigate(typeof(NotificationsPage), dts);
+        }
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(NotificationsListPage));
         }
 
     }

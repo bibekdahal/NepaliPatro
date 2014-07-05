@@ -31,7 +31,7 @@ namespace Tasks
             ShowNotification();
         }
 
-        string getNepVal(int num)
+        string GetNepVal(int num)
         {
             string str = "";
             while (num != 0)
@@ -52,18 +52,31 @@ namespace Tasks
             nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
 
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
-            //TileSquare150x150Block); for windows 8.1+
-            tileXml.GetElementsByTagName("text")[0].InnerText = getNepVal(d);
+            tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
+            ((XmlElement)tileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
 
             XmlDocument tileXmlWide = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150BlockAndText01);
-            tileXmlWide.GetElementsByTagName("text")[4].InnerText = getNepVal(d);
+            tileXmlWide.GetElementsByTagName("text")[4].InnerText = GetNepVal(d);
             tileXmlWide.GetElementsByTagName("text")[3].InnerText = weeks[(int)td.DayOfWeek];
-            tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + getNepVal(y);
+            tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
+            tileXmlWide.GetElementsByTagName("text")[0].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlWide.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
             IXmlNode node = tileXml.ImportNode(tileXmlWide.GetElementsByTagName("binding").Item(0), true);
             tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
+
+            XmlDocument tileXmlLarge = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare310x310BlockAndText02);
+            tileXmlLarge.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
+            tileXmlLarge.GetElementsByTagName("text")[1].InnerText = weeks[(int)td.DayOfWeek];
+            tileXmlLarge.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
+            tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
+
+            IXmlNode node2 = tileXml.ImportNode(tileXmlLarge.GetElementsByTagName("binding").Item(0), true);
+            tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node2);
+
 
             TileNotification tileNotification = new TileNotification(tileXml);
             tileNotification.ExpirationTime = td.AddDays(1);
@@ -90,18 +103,30 @@ namespace Tasks
             nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
 
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
-            //TileSquare150x150Block); for windows 8.1+
-            tileXml.GetElementsByTagName("text")[0].InnerText = getNepVal(d);
+            tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
+            ((XmlElement)tileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
 
             XmlDocument tileXmlWide = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150BlockAndText01);
-            tileXmlWide.GetElementsByTagName("text")[4].InnerText = getNepVal(d);
+            tileXmlWide.GetElementsByTagName("text")[4].InnerText = GetNepVal(d);
             tileXmlWide.GetElementsByTagName("text")[3].InnerText = weeks[(int)td.DayOfWeek];
-            tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + getNepVal(y);
+            tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
+            tileXmlWide.GetElementsByTagName("text")[0].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlWide.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
 
             IXmlNode node = tileXml.ImportNode(tileXmlWide.GetElementsByTagName("binding").Item(0), true);
             tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
+
+            XmlDocument tileXmlLarge = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare310x310BlockAndText02);
+            tileXmlLarge.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
+            tileXmlLarge.GetElementsByTagName("text")[1].InnerText = weeks[(int)td.DayOfWeek];
+            tileXmlLarge.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
+            tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
+            ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
+
+            IXmlNode node2 = tileXml.ImportNode(tileXmlLarge.GetElementsByTagName("binding").Item(0), true);
+            tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node2);
 
             ScheduledTileNotification scheduledTile = new ScheduledTileNotification(tileXml, td);
             scheduledTile.ExpirationTime = td.AddDays(1);
