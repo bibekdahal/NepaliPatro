@@ -373,40 +373,19 @@ namespace NepaliPatro
             YearsList.SelectedIndex = currentYear - 2000;
         }
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            string str = "";
-            var notifier = TileUpdateManager.CreateTileUpdaterForApplication();
-            var scheduled = notifier.GetScheduledTileNotifications();
 
-            /*
-            for (int i = 0, len = scheduled.Count; i < len; i++)
-                str += scheduled[i].DeliveryTime.ToString() + "\n";
-            */
-
-            foreach (var task in BackgroundTaskRegistration.AllTasks)
-            {
-                str += task.Value.Name + "\n";
-
-            }
-
-
-            MessageDialog msg = new MessageDialog(str);
-            await msg.ShowAsync();
-        }
-
-        int m_selection;
+        Grid m_selection;
         private void DoTasks(IUICommand command)
         {
             var currentId = (int)command.Id;
+            int tag = (int)(m_selection.Tag);
+            int i = tag / 7;
+            int j = tag % 7;
 
             switch (currentId)
             {
                 case 1:
-                    {
-                        int tag = m_selection;
-                        int i = tag / 7;
-                        int j = tag % 7;
+                    {                        
                         int col = nd.GetFirstDay(currentYear, currentMonth);
                         if (i == 0 && j < col) return;
 
@@ -421,13 +400,22 @@ namespace NepaliPatro
                     }
                     break;
                 case 2:
-                        break;
+                    {
+                        AppBarToggleButton icon = new AppBarToggleButton();
+                        icon.Icon = new SymbolIcon(Symbol.Flag);
+                        icon.IsChecked = true;
+                        icon.IsEnabled = false;
+                        icon.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Right;
+                        
+                        m_selection.Children.Add(icon);
+                    }
+                    break;
             }
         }
         async void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            m_selection = (int)((Grid)sender).Tag;
-            int tag = m_selection;
+            m_selection = (Grid)sender;
+            int tag = (int)(m_selection.Tag);
             int i = tag / 7;
             int j = tag % 7;
             int col = nd.GetFirstDay(currentYear, currentMonth);
