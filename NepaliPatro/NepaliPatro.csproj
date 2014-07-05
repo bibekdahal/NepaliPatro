@@ -128,6 +128,9 @@
     <Compile Include="FlagPage.xaml.cs">
       <DependentUpon>FlagPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FlagsListPage.xaml.cs">
+      <DependentUpon>FlagsListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -166,6 +169,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="FlagPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FlagsListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

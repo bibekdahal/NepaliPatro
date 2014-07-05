@@ -15,13 +15,12 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Notifications;
 
 namespace NepaliPatro
 {
-    class NotificationItem
+    class FlagItem
     {
-        public NotificationItem(string title, string subtitle, string content)
+        public FlagItem(string title, string subtitle, string content)
         {
             Title = title; Subtitle = subtitle; Content = content;
         }
@@ -29,7 +28,7 @@ namespace NepaliPatro
         public string Subtitle { get; set; }
         public string Content { get; set; }
     }
-    public sealed partial class NotificationsListPage : Page
+    public sealed partial class FlagsListPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
@@ -44,17 +43,14 @@ namespace NepaliPatro
             get { return this.navigationHelper; }
         }
 
-        public NotificationsListPage()
+        public FlagsListPage()
         {
             this.InitializeComponent();
-
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
             this.navigationHelper.SaveState += navigationHelper_SaveState;
-
             this.navigationHelper.GoBackCommand = new NepaliPatro.Common.RelayCommand(() => this.GoBack(), () => this.CanGoBack());
             this.itemListView.SelectionChanged += itemListView_SelectionChanged;
-
             Window.Current.SizeChanged += Window_SizeChanged;
             this.InvalidateVisualState();
         }
@@ -62,23 +58,30 @@ namespace NepaliPatro
         void itemListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.UsingLogicalPageNavigation())
+            {
                 this.navigationHelper.GoBackCommand.RaiseCanExecuteChanged();
+            }
         }
 
-        void LoadNotifications()
+        void LoadItems()
         {
             NepDate npd = new NepDate();
-            int ny, nm, nd; ny=nm=nd=0;
-            List<NotificationItem> items = new List<NotificationItem>();
-            var notifcations = ToastNotificationManager.CreateToastNotifier().GetScheduledToastNotifications();
-            for (int i = 0; i < notifcations.Count; ++i)
-            {
-                npd.ConvertFromEng(notifcations[i].DeliveryTime.Year, notifcations[i].DeliveryTime.Month, notifcations[i].DeliveryTime.Day,
-                        ref ny, ref nm, ref nd);
+            int ny, nm, nd; ny = nm = nd = 0;
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
-                items.Add(new NotificationItem(MainPage.GetNepVal(nd) + " " + MainPage.months[nm - 1] + ", " + MainPage.GetNepVal(ny), 
-                    MainPage.weeks[(int)notifcations[i].DeliveryTime.DayOfWeek] + " " + notifcations[i].DeliveryTime.ToString("T"),  notifcations[i].Content.InnerText));
+            List<FlagItem> items = new List<FlagItem>();
+            for (int i = 0; i < localSettings.Values.Keys.Count; ++i)
+            {
+                string val = localSettings.Values.Keys.ElementAt(i);
+                if (val.StartsWith("@FLAG:"))
+                {
+                    var date = new DateTime(Convert.ToInt64(val.Substring(6)));
+                    npd.ConvertFromEng(date.Year, date.Month, date.Day, ref ny, ref nm, ref nd);
+                    items.Add(new FlagItem(MainPage.GetNepVal(nd) + " " + MainPage.months[nm - 1] + ", " + MainPage.GetNepVal(ny),
+                        MainPage.weeks[(int)date.DayOfWeek], (string)localSettings.Values[val]));            
+                }
             }
+
             DefaultViewModel["Items"] = items;
             if (items.Count == 0)
             {
@@ -93,7 +96,7 @@ namespace NepaliPatro
         }
         private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            LoadNotifications();
+            LoadItems();
             if (e.PageState == null)
             {
                 if (!this.UsingLogicalPageNavigation() && this.itemsViewSource.View != null)
@@ -237,9 +240,9 @@ namespace NepaliPatro
 
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            var notifier = ToastNotificationManager.CreateToastNotifier();
-            notifier.RemoveFromSchedule(notifier.GetScheduledToastNotifications()[itemsViewSource.View.CurrentPosition]);
-            LoadNotifications();
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values.Remove(localSettings.Values.Keys.ElementAt(itemsViewSource.View.CurrentPosition));
+            LoadItems();
         }
     }
 }

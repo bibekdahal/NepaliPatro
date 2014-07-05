@@ -13,6 +13,7 @@
     <Page.TopAppBar>
         <CommandBar>
             <AppBarButton Label="सूचनाहरू" Icon="Bullets" Click="AppBarButton_Click"/>
+            <AppBarButton Label="चिन्हहरू" Icon="Bullets" Click="AppBarButton1_Click"/>
             <!--AppBarButton Label="Help" Icon="Help"/-->
         </CommandBar>
     </Page.TopAppBar>

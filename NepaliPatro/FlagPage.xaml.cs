@@ -84,7 +84,7 @@ namespace NepaliPatro
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
-            localSettings.Values[new DateTime(m_ey, m_em, m_ed).Ticks.ToString()] = tb_message.Text;
+            localSettings.Values["@FLAG:" + new DateTime(m_ey, m_em, m_ed).Ticks.ToString()] = tb_message.Text;
             this.Frame.GoBack();
         }
     }

@@ -1,6 +1,6 @@
 ﻿<Page
     x:Name="pageRoot"
-    x:Class="NepaliPatro.NotificationsListPage"
+    x:Class="NepaliPatro.FlagsListPage"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -49,7 +49,7 @@
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="pageTitle" Text="सूचनाहरू" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+            <TextBlock x:Name="pageTitle" Text="चिन्हहरू" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,0,40"/>
         </Grid>
 
@@ -114,7 +114,7 @@
                     <TextBlock x:Name="itemTitle" Margin="0,-10,0,10" Text="{Binding Title}" Style="{StaticResource SubheaderTextBlockStyle}"/>
                     <TextBlock x:Name="itemSubtitle" Margin="0,0,0,20" Text="{Binding Subtitle}" Style="{StaticResource SubtitleTextBlockStyle}"/>
                 </StackPanel>
-                <TextBlock Name="tb_empty" Grid.Row="2" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource SubtitleTextBlockStyle}">तपाईँले हुनै पनि सूचना राख्नुभएको छैन ।</TextBlock>
+                <TextBlock Name="tb_empty" Grid.Row="2" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource SubtitleTextBlockStyle}">तपाईँले हुनै पनि चिन्ह राख्नुभएको छैन ।</TextBlock>
                 <StackPanel Name="sp_content" Grid.Row="2" Grid.ColumnSpan="2">
                     <TextBlock Margin="0,20,0,0" Text="{Binding Content}" Style="{StaticResource BodyTextBlockStyle}"/>
                     <AppBarButton HorizontalAlignment="Right" Label="हटाउनुहोस्" Icon="Clear" Click="AppBarButton_Click"/>

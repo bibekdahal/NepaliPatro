@@ -215,7 +215,7 @@ namespace NepaliPatro
                 }
 
                 nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, j);
-                string key = new DateTime(ey, em, ed).Ticks.ToString();
+                string key = "@FLAG:" + new DateTime(ey, em, ed).Ticks.ToString();
                 if (localSettings.Values.ContainsKey(key))
                 {
                     AppBarToggleButton icon = new AppBarToggleButton();
@@ -225,7 +225,7 @@ namespace NepaliPatro
                     icon.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Right;
 
                     panels[row, col].Children.Add(icon);
-                   
+
                     ToolTip toolTip = new ToolTip();
                     toolTip.Content = localSettings.Values[key];
                     ToolTipService.SetToolTip(panels[row, col], toolTip);
@@ -424,6 +424,14 @@ namespace NepaliPatro
                         this.Frame.Navigate(typeof(FlagPage), dts);
                     }
                     break;
+                case 3:
+                    {
+                        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                        localSettings.Values.Remove("@FLAG:" + new DateTime(ey, em, ed).Ticks.ToString());
+                        Frame.Navigate(Frame.CurrentSourcePageType);
+                        Frame.GoBack();
+                        break;
+                    }
             }
         }
         async void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -448,18 +456,33 @@ namespace NepaliPatro
                 Label = "सूचना राख्नुहोस्",
                 Invoked = DoTasks,
             });
-            menu.Commands.Add(new UICommand
-            {
-                Id = 2,
-                Label = "चिन्ह राख्नुहोस्",
-                Invoked = DoTasks
-            });
+            
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            string key = "@FLAG:" + new DateTime(ey, em, ed).Ticks.ToString();
+            if (!localSettings.Values.ContainsKey(key))
+                menu.Commands.Add(new UICommand
+                {
+                    Id = 2,
+                    Label = "चिन्ह राख्नुहोस्",
+                    Invoked = DoTasks
+                });
+            else
+                menu.Commands.Add(new UICommand
+                {
+                    Id = 3,
+                    Label = "चिन्ह हटाउनुहोस्",
+                    Invoked = DoTasks
+                });
             var p = e.GetCurrentPoint(null).Position;
             await menu.ShowAsync(p);
         }
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(NotificationsListPage));
+        }
+        private void AppBarButton1_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(FlagsListPage));
         }
 
     }
