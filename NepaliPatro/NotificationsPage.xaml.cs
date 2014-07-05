@@ -109,6 +109,8 @@ namespace NepaliPatro
                 ScheduledToastNotification scheduledToast = new ScheduledToastNotification(toastXml, time);
                 ToastNotificationManager.CreateToastNotifier().AddToSchedule(scheduledToast);
 
+                MainPage.ShowNotification();
+                MainPage.SetNotification();
                 this.Frame.GoBack();
             }
             else

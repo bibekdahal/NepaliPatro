@@ -53,7 +53,7 @@ namespace NepaliPatro
         Brush grayBrush3 = new SolidColorBrush(Windows.UI.ColorHelper.FromArgb(255, 220, 220, 220));
         Brush grayBrush4 = new SolidColorBrush(Windows.UI.ColorHelper.FromArgb(255, 209, 209, 209));
 
-        NepDate nd = new NepDate();
+        static NepDate nd = new NepDate();
 
         public MainPage()
         {
@@ -237,13 +237,8 @@ namespace NepaliPatro
             return str;
         }
 
-        void ShowNotification()
+        static XmlDocument CreateTile(DateTime td, int y, int m, int d)
         {
-            int y, m, d;
-            y = m = d = 0;
-            DateTime td = DateTime.Today;
-            nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
-
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
             tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
@@ -267,16 +262,24 @@ namespace NepaliPatro
             tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
             ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
 
+
             IXmlNode node2 = tileXml.ImportNode(tileXmlLarge.GetElementsByTagName("binding").Item(0), true);
             tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node2);
+            return tileXml;
+        }
+        public static void ShowNotification()
+        {
+            int y, m, d;
+            y = m = d = 0;
+            DateTime td = DateTime.Today;
+            nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
 
-
-            TileNotification tileNotification = new TileNotification(tileXml);
+            TileNotification tileNotification = new TileNotification(CreateTile(td, y, m, d));
             tileNotification.ExpirationTime = td.AddDays(1);
             TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
         }
 
-        void ClearNotifications()
+        static void ClearNotifications()
         {
             var notifier = TileUpdateManager.CreateTileUpdaterForApplication();
             var scheduled = notifier.GetScheduledTileNotifications();
@@ -285,7 +288,7 @@ namespace NepaliPatro
                 notifier.RemoveFromSchedule(scheduled[i]);
         }
 
-        void SetNotification()
+        public static void SetNotification()
         {
             ClearNotifications();
             //for (int i = 1; i < 3; i++)
@@ -295,33 +298,8 @@ namespace NepaliPatro
             DateTime td = DateTime.Today.AddDays(1);
             nd.ConvertFromEng(td.Year, td.Month, td.Day, ref y, ref m, ref d);
 
-            XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
-            tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
-            tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
-            ((XmlElement)tileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
-
-
-            XmlDocument tileXmlWide = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150BlockAndText01);
-            tileXmlWide.GetElementsByTagName("text")[4].InnerText = GetNepVal(d);
-            tileXmlWide.GetElementsByTagName("text")[3].InnerText = weeks[(int)td.DayOfWeek];
-            tileXmlWide.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
-            tileXmlWide.GetElementsByTagName("text")[0].InnerText = td.ToString("D");
-            ((XmlElement)tileXmlWide.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
-
-            IXmlNode node = tileXml.ImportNode(tileXmlWide.GetElementsByTagName("binding").Item(0), true);
-            tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
-
-            XmlDocument tileXmlLarge = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare310x310BlockAndText02);
-            tileXmlLarge.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
-            tileXmlLarge.GetElementsByTagName("text")[1].InnerText = weeks[(int)td.DayOfWeek];
-            tileXmlLarge.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
-            tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
-            ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
-
-            IXmlNode node2 = tileXml.ImportNode(tileXmlLarge.GetElementsByTagName("binding").Item(0), true);
-            tileXml.GetElementsByTagName("visual").Item(0).AppendChild(node2);
-
-            ScheduledTileNotification scheduledTile = new ScheduledTileNotification(tileXml, td);
+            
+            ScheduledTileNotification scheduledTile = new ScheduledTileNotification(CreateTile(td, y, m, d), td);
             scheduledTile.ExpirationTime = td.AddDays(1);
             TileUpdateManager.CreateTileUpdaterForApplication().AddToSchedule(scheduledTile);
             //}
