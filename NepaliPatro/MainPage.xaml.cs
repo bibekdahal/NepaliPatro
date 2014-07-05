@@ -395,9 +395,39 @@ namespace NepaliPatro
             await msg.ShowAsync();
         }
 
-        void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
+        int m_selection;
+        private void DoTasks(IUICommand command)
         {
-            int tag = (int)((Grid)sender).Tag;
+            var currentId = (int)command.Id;
+
+            switch (currentId)
+            {
+                case 1:
+                    {
+                        int tag = m_selection;
+                        int i = tag / 7;
+                        int j = tag % 7;
+                        int col = nd.GetFirstDay(currentYear, currentMonth);
+                        if (i == 0 && j < col) return;
+
+                        int day = tag - col + 1;
+                        int ey = 0, em = 0, ed = 0;
+                        nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, day);
+
+                        if (new DateTime(ey, em, ed) < DateTime.Today) return;
+
+                        int[] dts = new int[] { ey, em, ed, currentYear, currentMonth, day };
+                        this.Frame.Navigate(typeof(NotificationsPage), dts);
+                    }
+                    break;
+                case 2:
+                        break;
+            }
+        }
+        async void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            m_selection = (int)((Grid)sender).Tag;
+            int tag = m_selection;
             int i = tag / 7;
             int j = tag % 7;
             int col = nd.GetFirstDay(currentYear, currentMonth);
@@ -407,10 +437,23 @@ namespace NepaliPatro
             int ey = 0, em = 0, ed = 0;
             nd.ConvertToEng(ref ey, ref em, ref ed, currentYear, currentMonth, day);
 
-            if (new DateTime(ey, em, ed) < DateTime.Today) return;
 
-            int[] dts = new int[] { ey, em, ed, currentYear, currentMonth, day };
-            this.Frame.Navigate(typeof(NotificationsPage), dts);
+            PopupMenu menu = new PopupMenu();
+            if (new DateTime(ey, em, ed) >= DateTime.Today)
+                menu.Commands.Add(new UICommand
+            {
+                Id = 1,
+                Label = "सूचना राख्नुहोस्",
+                Invoked = DoTasks,
+            });
+            menu.Commands.Add(new UICommand
+            {
+                Id = 2,
+                Label = "चिन्ह राख्नुहोस्",
+                Invoked = DoTasks
+            });
+            var p = e.GetCurrentPoint(null).Position;
+            await menu.ShowAsync(p);
         }
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
