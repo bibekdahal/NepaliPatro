@@ -258,6 +258,8 @@ namespace NepaliPatro
 
         static XmlDocument CreateTile(DateTime td, int y, int m, int d)
         {
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Block);
             tileXml.GetElementsByTagName("text")[0].InnerText = GetNepVal(d);
             tileXml.GetElementsByTagName("text")[1].InnerText = months[m - 1] + ", " + weeks[(int)td.DayOfWeek];
@@ -279,6 +281,9 @@ namespace NepaliPatro
             tileXmlLarge.GetElementsByTagName("text")[1].InnerText = weeks[(int)td.DayOfWeek];
             tileXmlLarge.GetElementsByTagName("text")[2].InnerText = months[m - 1] + "  " + GetNepVal(y);
             tileXmlLarge.GetElementsByTagName("text")[3].InnerText = td.ToString("D");
+            string key = "@FLAG:" + td.Ticks.ToString();
+            if (localSettings.Values.ContainsKey(key))
+                tileXmlLarge.GetElementsByTagName("text")[6].InnerText = (string)localSettings.Values[key];
             ((XmlElement)tileXmlLarge.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "name");
 
 
@@ -409,9 +414,7 @@ namespace NepaliPatro
             switch (currentId)
             {
                 case 1:
-                    {                        
-                        
-
+                    {         
                         if (new DateTime(ey, em, ed) < DateTime.Today) return;
 
                         int[] dts = new int[] { ey, em, ed, currentYear, currentMonth, day };
@@ -430,6 +433,9 @@ namespace NepaliPatro
                         localSettings.Values.Remove("@FLAG:" + new DateTime(ey, em, ed).Ticks.ToString());
                         Frame.Navigate(Frame.CurrentSourcePageType);
                         Frame.GoBack();
+
+                        MainPage.ShowNotification();
+                        MainPage.SetNotification();
                         break;
                     }
             }

@@ -242,6 +242,9 @@ namespace NepaliPatro
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values.Remove(localSettings.Values.Keys.ElementAt(itemsViewSource.View.CurrentPosition));
+
+            MainPage.ShowNotification();
+            MainPage.SetNotification();
             LoadItems();
         }
     }

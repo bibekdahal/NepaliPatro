@@ -85,6 +85,9 @@ namespace NepaliPatro
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             localSettings.Values["@FLAG:" + new DateTime(m_ey, m_em, m_ed).Ticks.ToString()] = tb_message.Text;
+
+            MainPage.ShowNotification();
+            MainPage.SetNotification();
             this.Frame.GoBack();
         }
     }
