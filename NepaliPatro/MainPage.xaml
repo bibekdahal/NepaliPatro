@@ -17,11 +17,11 @@
             <!--AppBarButton Label="Help" Icon="Help"/-->
         </CommandBar>
     </Page.TopAppBar>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Viewbox>
             <Grid>
-                <Grid x:Name="TheGrid" HorizontalAlignment="Left" Height="500" Margin="80,210,0,0" VerticalAlignment="Top" Width="1198" Background="#FFD1D1D1">
+                <Grid x:Name="TheGrid" HorizontalAlignment="Center" Height="500" Margin="0,210,0,0" VerticalAlignment="Top" Width="1198" Background="#FFD1D1D1">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
@@ -44,7 +44,7 @@
 
 
                 </Grid>
-                <Grid x:Name="DayGrid" HorizontalAlignment="Left" Height="72" Margin="80,122,0,0" VerticalAlignment="Top" Width="1198">
+                <Grid x:Name="DayGrid" HorizontalAlignment="Center" Height="72" Margin="0,122,0,0" VerticalAlignment="Top" Width="1198" >
                     <Grid.RowDefinitions>
                         <RowDefinition />
                     </Grid.RowDefinitions>
@@ -60,8 +60,8 @@
                 </Grid>
                 <ComboBox x:Name="MonthsList" HorizontalAlignment="Left" Height="48" Margin="80,40,0,0" VerticalAlignment="Top" Width="145" SelectionChanged="MonthsList_SelectionChanged" FontWeight="Bold"/>
                 <ComboBox x:Name="YearsList" HorizontalAlignment="Left" Height="48" Margin="1140,40,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="YearsList_SelectionChanged" FontWeight="Bold"/>
-                <Button x:Name="LeftNavig" Content="&lt;" HorizontalAlignment="Left" Height="76" Margin="14,388,0,0" VerticalAlignment="Top" Width="55" RenderTransformOrigin="0.145,0.447" FontFamily="KaiTi" FontWeight="Bold" FontSize="48" BorderBrush="{x:Null}" Tapped="LeftNavig_Tapped"/>
-                <Button x:Name="RtNavig" Content="&gt;" HorizontalAlignment="Stretch" Height="76" Margin="1295,388,16,0" VerticalAlignment="Top" RenderTransformOrigin="0.145,0.447" FontFamily="KaiTi" FontWeight="Bold" FontSize="48" BorderBrush="{x:Null}" Tapped="RtNavig_Tapped"/>
+                <Button x:Name="LeftNavig" Content="&lt;" HorizontalAlignment="Right" Height="124" Margin="-7,364,1276,0" VerticalAlignment="Top" RenderTransformOrigin="0.145,0.447" FontFamily="KaiTi" FontWeight="Bold" FontSize="48" BorderBrush="{x:Null}" Tapped="LeftNavig_Tapped" Width="85"/>
+                <Button x:Name="RtNavig" Content="&gt;" HorizontalAlignment="Left" Height="124" Margin="1277,364,-7,0" VerticalAlignment="Top" RenderTransformOrigin="0.145,0.447" FontFamily="KaiTi" FontWeight="Bold" FontSize="48" BorderBrush="{x:Null}" Tapped="RtNavig_Tapped" Width="84"/>
             </Grid>
         </Viewbox>
     </Grid>
